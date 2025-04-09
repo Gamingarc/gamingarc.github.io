@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Automatic Webpage Redirect</title>
+</head>
+<body>
+  <h1>Redirecting...</h1>
+
+  <script>
+    function loadAndRedirect() {
+      fetch('redirects.xml') // Fetch the XML file
+        .then(response => response.text()) // Get the response as text
+        .then(xmlString => {
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+          const firstRedirect = xmlDoc.querySelector('redirect'); // Get the first <redirect> element
+
+          if (firstRedirect) {
+            const ip = firstRedirect.querySelector('ip').textContent; // Get the IP from the first redirect
+            window.location.href = 'http://' + ip; // Automatically redirect
+          } else {
+            alert('No redirect information found in the XML file!');
+          }
+        })
+        .catch(error => {
+          console.error('Error loading XML:', error);
+          alert('Failed to load redirect information.');
+        });
+    }
+
+    // Load the redirects and try to redirect when the page loads
+    window.onload = loadAndRedirect;
+  </script>
+</body>
+</html>
